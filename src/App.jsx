@@ -1,53 +1,50 @@
-import React from 'react';
+// src/App.js
+// src/App.js
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { UserProvider, useUser } from './contexts/UserContext';  // Import both UserProvider and useUser
+
 import Login from './component/Login';
 import Signup from './component/Signup';
-import HomePage from './component/HomePage'; // Import HomePage component
+import HomePage from './component/HomePage';
 import ProfilePage from './component/ProfilePage';
-import { ToastContainer } from 'react-toastify';  // Import ToastContainer
-import 'react-toastify/dist/ReactToastify.css';   // Import the Toastify CSS
 import AboutUs from './component/AboutUs';
-import ContactUs from './component/ContactUs'; // Import ContactUs component
+import ContactUs from './component/ContactUs';
 import Chatbot from './component/Chatbot';
 import ConnectPeople from './component/ConnectPeople';
-import ViewProfile from './component/ViewProfile'
-
-
+import ViewProfile from './component/ViewProfile';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   return (
-    <Router >
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} /> 
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<HomePage />} /> {/* Route to HomePage */}
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/about" element={<AboutUs />} />
-        <Route path="/contact" element={<ContactUs />} /> {/* Route to ContactUs page */}
-        <Route path="/chatbot" element={<Chatbot />} />
-        <Route path="/connect" element={<ConnectPeople />} />
-        <Route path="/profile/:id" element={<ViewProfile />} /> {/* New route */}
-
-        
-
-
-        
-      </Routes>
-
-      {/* Add the ToastContainer to show notifications */}
-      <ToastContainer 
-        position="top-right" // Customize position
-        autoClose={5000}    // Customize auto-close time in ms
-        hideProgressBar={false}  // Show progress bar
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-    </Router>
+    <UserProvider>  {/* Wrap everything inside UserProvider */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/chatbot" element={<Chatbot />} />
+          <Route path="/connect" element={<ConnectPeople />} />
+          <Route path="/profile/:id" element={<ViewProfile />} />
+        </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </Router>
+    </UserProvider>
   );
 };
 

@@ -1,329 +1,102 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
-import ViewProfile from './ViewProfile';
+import ViewProfile from "./ViewProfile";
 
-const dummyUsers = {
-  students: [
-    {
-      id: 1,
-      name: "Aarav Sharma",
-      role: "Student",
-      image: "https://randomuser.me/api/portraits/men/32.jpg",
-      bio: "Passionate about AI and ML.",
-      linkedin: "https://linkedin.com/in/aaravsharma",
-      academicYear: "3rd Year",
-      skills: ["AI", "Machine Learning", "Python"],
-      isFollowing: false,
-    },
-    {
-      id: 2,
-      name: "Sanya Verma",
-      role: "Student",
-      image: "https://randomuser.me/api/portraits/women/45.jpg",
-      bio: "Loves coding and web development.",
-      linkedin: "https://linkedin.com/in/sanyaverma",
-      academicYear: "2nd Year",
-      skills: ["React", "JavaScript", "CSS"],
-      isFollowing: false,
-    },
-    {
-      id: 3,
-      name: "Kabir Singh",
-      role: "Student",
-      image: "https://randomuser.me/api/portraits/men/46.jpg",
-      bio: "Aspiring cybersecurity expert.",
-      linkedin: "https://linkedin.com/in/kabirsingh",
-      academicYear: "4th Year",
-      skills: ["Cybersecurity", "Ethical Hacking", "Networking"],
-      isFollowing: true,
-    },
-    {
-      id: 4,
-      name: "Ishita Roy",
-      role: "Student",
-      image: "https://randomuser.me/api/portraits/women/30.jpg",
-      bio: "AI enthusiast and research student.",
-      linkedin: "https://linkedin.com/in/ishitaroy",
-      academicYear: "3rd Year",
-      skills: ["AI", "Deep Learning", "Python"],
-      isFollowing: false,
-    },
-    {
-      id: 5,
-      name: "Ritik Joshi",
-      role: "Student",
-      image: "https://randomuser.me/api/portraits/men/29.jpg",
-      bio: "Loves solving DSA problems.",
-      linkedin: "https://linkedin.com/in/ritikjoshi",
-      academicYear: "2nd Year",
-      skills: ["Data Structures", "Algorithms", "C++"],
-      isFollowing: true,
-    },
-  ],
-  alumni: [
-    {
-      id: 6,
-      name: "Rohan Mehta",
-      role: "Alumni",
-      image: "https://randomuser.me/api/portraits/men/50.jpg",
-      bio: "Software Engineer at Google.",
-      linkedin: "https://linkedin.com/in/rohanmehta",
-      skills: ["Backend", "Databases", "Cloud Computing"],
-      isFollowing: true,
-    },
-    {
-      id: 7,
-      name: "Priya Desai",
-      role: "Alumni",
-      image: "https://randomuser.me/api/portraits/women/52.jpg",
-      bio: "Data Scientist at Microsoft.",
-      linkedin: "https://linkedin.com/in/priyadesai",
-      skills: ["Data Science", "AI", "Python"],
-      isFollowing: false,
-    },
-    {
-      id: 8,
-      name: "Ankit Bansal",
-      role: "Alumni",
-      image: "https://randomuser.me/api/portraits/men/35.jpg",
-      bio: "Full-stack developer at Amazon.",
-      linkedin: "https://linkedin.com/in/ankitbansal",
-      skills: ["MERN Stack", "React", "Node.js"],
-      isFollowing: false,
-    },
-    {
-      id: 9,
-      name: "Sneha Kapoor",
-      role: "Alumni",
-      image: "https://randomuser.me/api/portraits/women/33.jpg",
-      bio: "Working as a UI/UX Designer at Adobe.",
-      linkedin: "https://linkedin.com/in/snehakapoor",
-      skills: ["UI/UX", "Figma", "Adobe XD"],
-      isFollowing: true,
-    },
-    {
-      id: 10,
-      name: "Vikram Rao",
-      role: "Alumni",
-      image: "https://randomuser.me/api/portraits/men/48.jpg",
-      bio: "Cloud Engineer at AWS.",
-      linkedin: "https://linkedin.com/in/vikramrao",
-      skills: ["Cloud Computing", "AWS", "DevOps"],
-      isFollowing: false,
-    },
-  ],
-  faculty: [
-    {
-      id: 11,
-      name: "Dr. Meera Kapoor",
-      role: "Faculty",
-      image: "https://randomuser.me/api/portraits/women/44.jpg",
-      bio: "Professor of Computer Science at XYZ University.",
-      linkedin: "https://linkedin.com/in/meerakapoor",
-      skills: ["Research", "Cybersecurity", "Data Privacy"],
-      isFollowing: true,
-    },
-    {
-      id: 12,
-      name: "Dr. Rajesh Khanna",
-      role: "Faculty",
-      image: "https://randomuser.me/api/portraits/men/41.jpg",
-      bio: "Expert in AI and Machine Learning.",
-      linkedin: "https://linkedin.com/in/rajeshkhanna",
-      skills: ["AI", "Deep Learning", "NLP"],
-      isFollowing: false,
-    },
-    {
-      id: 13,
-      name: "Dr. Neha Sharma",
-      role: "Faculty",
-      image: "https://randomuser.me/api/portraits/women/40.jpg",
-      bio: "Database Systems expert.",
-      linkedin: "https://linkedin.com/in/nehasharma",
-      skills: ["DBMS", "SQL", "Big Data"],
-      isFollowing: true,
-    },
-    {
-      id: 14,
-      name: "Dr. Anil Kumar",
-      role: "Faculty",
-      image: "https://randomuser.me/api/portraits/men/55.jpg",
-      bio: "Software Engineering professor.",
-      linkedin: "https://linkedin.com/in/anilkumar",
-      skills: ["Software Development", "Agile", "System Design"],
-      isFollowing: false,
-    },
-    {
-      id: 15,
-      name: "Dr. Pooja Reddy",
-      role: "Faculty",
-      image: "https://randomuser.me/api/portraits/women/53.jpg",
-      bio: "Expert in AI Ethics and Fairness.",
-      linkedin: "https://linkedin.com/in/poojareddy",
-      skills: ["AI Ethics", "Bias Detection", "Fair ML"],
-      isFollowing: true,
-    },
-  ],
-  researchers: [
-    {
-      id: 16,
-      name: "Dr. Ravi Agrawal",
-      role: "Researcher",
-      image: "https://randomuser.me/api/portraits/men/60.jpg",
-      bio: "Researching Quantum Computing.",
-      linkedin: "https://linkedin.com/in/raviagrawal",
-      skills: ["Quantum Computing", "Cryptography", "Mathematics"],
-      isFollowing: false,
-    },
-    {
-      id: 17,
-      name: "Dr. Kavita Menon",
-      role: "Researcher",
-      image: "https://randomuser.me/api/portraits/women/58.jpg",
-      bio: "Focused on NLP advancements.",
-      linkedin: "https://linkedin.com/in/kavitamenon",
-      skills: ["NLP", "Linguistics", "AI"],
-      isFollowing: true,
-    },
-    {
-      id: 18,
-      name: "Dr. Arjun Sinha",
-      role: "Researcher",
-      image: "https://randomuser.me/api/portraits/men/63.jpg",
-      bio: "IoT and Smart Cities researcher.",
-      linkedin: "https://linkedin.com/in/arjunsinha",
-      skills: ["IoT", "Smart Cities", "Embedded Systems"],
-      isFollowing: false,
-    },
-    {
-      id: 19,
-      name: "Dr. Sanjana Bhatt",
-      role: "Researcher",
-      image: "https://randomuser.me/api/portraits/women/61.jpg",
-      bio: "AI and Healthcare research specialist.",
-      linkedin: "https://linkedin.com/in/sanjanabhatt",
-      skills: ["AI in Healthcare", "Data Science", "Medical AI"],
-      isFollowing: true,
-    },
-    {
-      id: 20,
-      name: "Dr. Vishal Chauhan",
-      role: "Researcher",
-      image: "https://randomuser.me/api/portraits/men/64.jpg",
-      bio: "Blockchain and security researcher.",
-      linkedin: "https://linkedin.com/in/vishalchauhan",
-      skills: ["Blockchain", "Cybersecurity", "Smart Contracts"],
-      isFollowing: false,
-    },
-  ],
-};
-
-
-
-
-function WatchProfile({ user, onBack }) {
-  return (
-    <div className="p-6 flex flex-col items-center">
-      <button onClick={onBack} className="mb-4 text-blue-600 font-bold">⬅ Back</button>
-      <div className="bg-white shadow-lg rounded-xl p-6 w-96 border border-blue-300">
-        <img
-          src={user.image}
-          alt={user.name}
-          className="w-40 h-40 rounded-full border-4 border-blue-500 shadow-lg mx-auto"
-        />
-        <div className="text-center mt-4">
-          <h2 className="text-2xl font-extrabold text-blue-800">{user.name}</h2>
-          <p className="text-lg font-semibold text-black">{user.role}</p>
-          {user.academicYear && (
-            <p className="text-lg font-medium text-black">{user.academicYear}</p>
-          )}
-          <p className="text-lg text-black mt-2">{user.bio}</p>
-          <p className="text-lg font-bold text-black mt-2">Skills: <span className="font-normal">{user.skills.join(", ")}</span></p>
-          <a
-            href={user.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-block text-blue-600 text-lg font-bold underline hover:text-blue-900"
-          >
-            LinkedIn Profile
-          </a>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Cards({ user, onToggleFollow, onViewProfile }) {
-  return (
-    <div className="p-4">
-      <div className="w-80 bg-white hover:scale-105 duration-200 shadow-lg rounded-xl p-4">
-        <figure className="flex justify-center">
-          <img
-            src={user.image}
-            alt={user.name}
-            className="w-24 h-24 rounded-full border-4 border-blue-500 cursor-pointer"
-            onClick={() => onViewProfile(user)}
-          />
-        </figure>
-        <div className="text-center mt-4">
-          <h2 className="text-blue-700 text-lg font-bold">{user.name}</h2>
-          <p className="text-gray-600 font-medium">{user.role}</p>
-          <div className="mt-4">
-            <button
-              className={`px-4 py-2 rounded-full ${
-                user.isFollowing
-                  ? "bg-red-500 text-white hover:bg-red-600"
-                  : "bg-green-500 text-white hover:bg-green-600"
-              } transition`}
-              onClick={() => onToggleFollow(user.id)}
-            >
-              {user.isFollowing ? "Unfollow" : "Connect"}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+const dummyUsers = [
+  { _id: "1", name: "John Doe", role: "Student", image: "https://randomuser.me/api/portraits/men/1.jpg", skills: ["JavaScript", "React", "Node.js"] },
+  { _id: "2", name: "Jane Smith", role: "Faculty", image: "https://randomuser.me/api/portraits/women/2.jpg", school: "VIT Bhopal" },
+  { _id: "3", name: "Alice Johnson", role: "Alumni", image: "https://randomuser.me/api/portraits/women/3.jpg", company: "Google" },
+  { _id: "4", name: "Bob Brown", role: "Student", image: "https://randomuser.me/api/portraits/men/4.jpg", skills: ["HTML", "CSS", "JavaScript"] },
+];
 
 const ConnectPeople = () => {
   const [users, setUsers] = useState(dummyUsers);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [connectionRequests, setConnectionRequests] = useState([dummyUsers[0], dummyUsers[2]]); // Example requests
 
-  const toggleFollow = (id) => {
-    setUsers((prevUsers) => {
-      const updatedUsers = { ...prevUsers };
-      Object.keys(updatedUsers).forEach((category) => {
-        updatedUsers[category] = updatedUsers[category].map((user) =>
-          user.id === id ? { ...user, isFollowing: !user.isFollowing } : user
-        );
-      });
-      return updatedUsers;
-    });
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+    } else {
+      setSearchResults(users.filter((user) => user.name.toLowerCase().includes(searchTerm.toLowerCase())));
+    }
+  }, [searchTerm, users]);
+
+  const handleAcceptRequest = (userId) => {
+    setConnectionRequests((prevRequests) => prevRequests.filter((user) => user._id !== userId));
+  };
+
+  const handleIgnoreRequest = (userId) => {
+    setConnectionRequests((prevRequests) => prevRequests.filter((user) => user._id !== userId));
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 text-gray-900">
       <Navbar />
-      <div className="max-w-5xl mx-auto p-6">
-        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">🎓 College Connect</h2>
-        {selectedUser ? (
-          <WatchProfile user={selectedUser} onBack={() => setSelectedUser(null)} />
-        ) : (
-          Object.entries(users).map(([category, categoryUsers]) => (
-            <div key={category} className="mb-10">
-              <h3 className="text-xl font-bold text-pink-700 mb-4">{category.toUpperCase()}</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-                {categoryUsers.map((user) => (
-                  <Cards key={user.id} user={user} onToggleFollow={toggleFollow} onViewProfile={() => setSelectedUser(user)} />
-                ))}
+      <div className="max-w-5xl mx-auto py-10 px-6">
+        <h2 className="text-3xl font-semibold mb-6">Find & Connect with People</h2>
+        <input
+          type="text"
+          placeholder="Search users..."
+          className="w-full p-3 border rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+
+        {connectionRequests.length > 0 && (
+          <div className="bg-white p-4 rounded-lg shadow-md mt-6">
+            <h3 className="text-xl font-medium text-blue-500">Connection Requests</h3>
+            {connectionRequests.map((user) => (
+              <div key={user._id} className="flex items-center p-3 bg-gray-50 rounded-lg shadow-sm mt-2">
+                <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full border-2 border-blue-500" />
+                <div className="ml-4">
+                  <h4 className="font-semibold">{user.name}</h4>
+                  <p className="text-gray-500 text-sm">{user.role}</p>
+                </div>
+                <div className="ml-auto space-x-2">
+                  <button className="px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600" onClick={() => handleAcceptRequest(user._id)}>Accept</button>
+                  <button className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600" onClick={() => handleIgnoreRequest(user._id)}>Ignore</button>
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
+
+        {searchResults.length > 0 && (
+          <div className="bg-white p-4 rounded-lg shadow-md mt-6">
+            <h3 className="text-xl font-medium text-blue-500">Search Results</h3>
+            {searchResults.map((user) => (
+              <div key={user._id} className="flex items-center p-3 bg-gray-50 rounded-lg shadow-sm mt-2 cursor-pointer">
+                <img src={user.image} alt={user.name} className="w-12 h-12 rounded-full border-2 border-blue-500" />
+                <div className="ml-4">
+                  <h4 className="font-semibold">{user.name}</h4>
+                  <p className="text-gray-500 text-sm">{user.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <h3 className="text-2xl font-semibold mt-8 mb-4">People You May Know</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {users.map((user) => (
+            <div key={user._id} className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center text-center">
+              <img src={user.image} alt={user.name} className="w-24 h-24 rounded-full border-2 border-blue-500 mb-4" />
+              <h4 className="text-lg font-semibold">{user.name}</h4>
+              <p className="text-gray-500 text-sm">{user.role}</p>
+              {user.role === "Student" && <p className="text-gray-400 text-xs mt-1">Skills: {user.skills?.join(", ")}</p>}
+              {user.role === "Faculty" && <p className="text-gray-400 text-xs mt-1">School: {user.school}</p>}
+              {user.role === "Alumni" && <p className="text-gray-400 text-xs mt-1">Company: {user.company}</p>}
+              <button className="mt-4 px-4 py-2 text-sm font-medium bg-blue-500 text-white rounded-md hover:bg-blue-600">Follow</button>
+            </div>
+          ))}
+        </div>
+        {selectedUser && <ViewProfile user={selectedUser} onClose={() => setSelectedUser(null)} />}
       </div>
     </div>
   );
 };
 
 export default ConnectPeople;
+
