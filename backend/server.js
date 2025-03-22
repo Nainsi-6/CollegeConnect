@@ -291,6 +291,20 @@ app.post("/api/profile", async (req, res) => {
   }
 });
 
+// Middleware for Authentication
+const authMiddleware = (req, res, next) => {
+  const token = req.header("Authorization");
+  if (!token) return res.status(401).json({ message: "❌ Access Denied" });
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = verified;
+    next();
+  } catch (error) {
+    res.status(400).json({ message: "❌ Invalid Token" });
+  }
+};
+
 // Follow a user
 app.post("/follow", authMiddleware, async (req, res) => {
   const { userId, followId } = req.body;
@@ -330,19 +344,7 @@ app.post("/connect", authMiddleware, async (req, res) => {
   }
 });
 
-// Middleware for Authentication
-const authMiddleware = (req, res, next) => {
-  const token = req.header("Authorization");
-  if (!token) return res.status(401).json({ message: "❌ Access Denied" });
 
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
-    next();
-  } catch (error) {
-    res.status(400).json({ message: "❌ Invalid Token" });
-  }
-};
 
 // Server Setup
 const PORT = process.env.PORT || 5001;
