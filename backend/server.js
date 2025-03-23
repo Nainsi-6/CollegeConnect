@@ -176,6 +176,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
@@ -184,71 +185,83 @@ mongoose
 
 // User Schema
 const UserSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ["Student", "Faculty", "Alumni"], required: true },
-  batch: String,
-  regNumber: String,
-  facultyId: String,
-  department: String,
-  company: String,
-  image: String,
-  skills: [String],
-  linkedin: String,
-  hobbies: String,
-  description: String,
-  branch: String,
-  year: String,
+  name: { type: String, required: true }, 
+  email: { type: String, unique: true, required: true }, 
+  password: { type: String, required: true }, 
+  role: { type: String, enum: ["student", "faculty", "alumni"], required: true },
+
+  // Optional fields based on role
+  batch: { type: String, default: "" }, // For students
+  regNumber: { type: String, default: "" }, // For students
+  facultyId: { type: String, default: "" }, // For faculty
+  department: { type: String, default: "" }, // For faculty
+  company: { type: String, default: "" }, // For alumni
+  passedOutBatch: { type: String, default: "" }, // For alumni
+
+  // Additional optional fields
+  image: { type: String, default: "" },
+  skills: { type: [String], default: [] },
+  linkedin: { type: String, default: "" },
+  hobbies: { type: String, default: "" },
+  description: { type: String, default: "" },
+  branch: { type: String, default: "" },
+  year: { type: String, default: "" },
+
   connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
+  followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
 const User = mongoose.model("User", UserSchema);
 
+
 // Signup Route
-app.post("/signup", async (req, res) => {
-  const { name, email, password, role, batch, regNumber, facultyId, department, company, image, skills, linkedin } = req.body;
-
-  if (!name || !email || !password || !role) {
-    return res.status(400).json({ message: "❌ All fields are required" });
-  }
-
+app.post('/signup', async (req, res) => {
   try {
+    const { name, email, password, role, batch, regNumber, facultyId, department, company, passedOutBatch } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ message: "All required fields must be filled!" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: "❌ Email already exists" });
+      return res.status(400).json({ message: "User already exists!" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
       role,
-      batch,
-      regNumber,
-      facultyId,
-      department,
-      company,
-      image,
-      skills,
-      linkedin,
+      batch: role === "student" ? batch : "",
+      regNumber: role === "student" ? regNumber : "",
+      facultyId: role === "faculty" ? facultyId : "",
+      department: role === "faculty" ? department : "",
+      company: role === "alumni" ? company : "",
+      passedOutBatch: role === "alumni" ? passedOutBatch : "",
     });
 
     await newUser.save();
-    res.json({ message: "✅ User registered successfully!" });
+    res.status(201).json({ message: "✅ Signup Successful! Please log in." });
+
   } catch (error) {
-    res.status(500).json({ message: "❌ Error signing up", error: error.message });
+    console.error("Signup Error:", error);
+    res.status(500).json({ message: "Server error, please try again later!" });
   }
 });
+
+
+
 
 // Login Route
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    if (!email || !password) return res.status(400).json({ message: "❌ Email and password are required" });
 
+    const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "❌ User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -344,9 +357,22 @@ app.post("/connect", authMiddleware, async (req, res) => {
   }
 });
 
+// Get logged-in user's details (Frontend will use this)
+app.get("/api/user", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password"); // Exclude password
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user", error: error.message });
+  }
+});
+
+
 
 
 // Server Setup
-const PORT = process.env.PORT || 5001;
+const PORT =  5005;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
