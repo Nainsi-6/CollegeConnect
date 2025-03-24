@@ -686,7 +686,7 @@ const HomePage = () => {
         {/* Left Sidebar - Announcements & Achievements */}
         <div className="hidden md:block md:col-span-1">
           <div className="bg-purple-700 p-5 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-white">📢 Announcements</h3>
+            <h3 className="text-lg font-semibold text-white">📢 announcements</h3>
             <ul className="mt-2 text-white">
               <li>📌 Hackathon registration starts from March 25</li>
               <li>📌 Mid-Sem exams from April 10</li>
