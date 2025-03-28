@@ -164,6 +164,7 @@ const PORT = process.env.PORT || 5001; // Changed to 5001 if 5000 is busy
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));*/
 
 
+
 const axios = require("axios");
 require("dotenv").config();
 const express = require("express");
@@ -171,6 +172,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const announcementRoutes = require("./routes/announcementRoutes")
+const achievementRoutes = require("./routes/achievementsRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 const app = express();
 app.use(express.json());
@@ -274,35 +278,8 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// Profile Route
-app.get("/api/profile/:email", async (req, res) => {
-  try {
-    const user = await User.findOne({ email: req.params.email }).populate("connections followers");
-    if (!user) return res.status(404).json({ message: "❌ Profile not found" });
 
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({ message: "❌ Error fetching profile", error: error.message });
-  }
-});
 
-app.post("/api/profile", async (req, res) => {
-  const { email, name, role, batch, image, skills, linkedin, hobbies, description, branch, year } = req.body;
-
-  if (!email) return res.status(400).json({ message: "❌ Email is required!" });
-
-  try {
-    const updatedUser = await User.findOneAndUpdate(
-      { email },
-      { $set: { name, role, batch, image, skills, linkedin, hobbies, description, branch, year } },
-      { new: true, upsert: true }
-    );
-
-    res.json({ message: "✅ Profile updated", user: updatedUser });
-  } catch (error) {
-    res.status(500).json({ message: "❌ Error updating profile", error: error.message });
-  }
-});
 
 // Middleware for Authentication
 const authMiddleware = (req, res, next) => {
@@ -368,9 +345,13 @@ app.get("/api/user", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Error fetching user", error: error.message });
   }
 });
-
-
-
+//Announcements
+app.use("/api/announcements", announcementRoutes);
+//Achievements
+app.use("/api/achievements", achievementRoutes);
+ 
+// Use Profile Routes
+app.use("/api/profile", profileRoutes);
 
 // Server Setup
 const PORT =  5005;

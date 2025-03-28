@@ -1,17 +1,10 @@
 const mongoose = require("mongoose");
 
-const profileSchema = new mongoose.Schema({
-  name: String,
-  username: String,
-  email: String,
-  branch: String,
-  hobbies: String,
-  skills: String,
-  year: String,
-  description: String,
-  profilePic: String, // Store image as base64 or URL
+const ProfileSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  branch: { type: String, required: true },
+  skills: { type: String, required: true },
+  description: { type: String, required: true }
 });
 
-const Profile = mongoose.model("Profile", profileSchema);
-
-module.exports = Profile;
+module.exports = mongoose.model("Profile", ProfileSchema);
