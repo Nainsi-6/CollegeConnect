@@ -1,18 +1,9 @@
 const mongoose = require("mongoose");
 
-const AnnouncementSchema = new mongoose.Schema({
-  text: {
-    type: String,
-    required: true,
-  },
-  date: {
-    type: String, // Storing date as a string (you can use Date type too)
-    required: true,
-  },
-  time: {
-    type: String, // Storing time separately
-    required: true,
-  },
+const announcementSchema = new mongoose.Schema({
+
+  description: String,
+  date: { type: Date, default: Date.now, expires: 604800 }, // 7 days (in seconds)
 });
 
-module.exports = mongoose.model("Announcement", AnnouncementSchema);
+module.exports = mongoose.model("Announcement", announcementSchema);

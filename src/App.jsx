@@ -15,6 +15,7 @@ import ConnectPeople from './component/ConnectPeople';
 import ViewProfile from './component/ViewProfile';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Event from "./component/Event";
 
 const App = () => {
   return (
@@ -31,6 +32,8 @@ const App = () => {
           <Route path="/chatbot" element={<Chatbot />} />
           <Route path="/connect" element={<ConnectPeople />} />
           <Route path="/profile/:id" element={<ViewProfile />} />
+          <Route path="/events" element={<Event />} />
+          
         </Routes>
         <ToastContainer
           position="top-right"

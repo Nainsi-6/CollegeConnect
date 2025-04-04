@@ -44,7 +44,7 @@ const Signup = () => {
     
 
     try {
-      const response = await fetch('http://localhost:5005/signup', { // Change 5001 to 5005
+      const response = await fetch('http://localhost:5005/api/auth/signup', { // Change 5001 to 5005
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userDetails),

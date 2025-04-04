@@ -1,12 +1,16 @@
 const express = require("express");
+const uploadFile = require("../middleware/multer");
+const { getProfile, updateProfile, createProfile } = require("../controllers/profileController");
+
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-  try {
-    res.status(200).json({ message: "Profile Created Successfully!" });
-  } catch (error) {
-    res.status(500).json({ message: "Server Error", error: error.message });
-  }
-});
+// Route to get a user's profile
+router.get("/:userId", getProfile);
+
+// Route to update a user's profile
+router.put("/:userId", uploadFile, updateProfile);
+
+// Route to create a new user's profile
+router.post("/create", uploadFile, createProfile);
 
 module.exports = router;

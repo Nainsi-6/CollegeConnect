@@ -1,10 +1,8 @@
 const mongoose = require("mongoose");
 
 const achievementSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    date: { type: String, required: true },
-    time: { type: String, required: true }
-}, { timestamps: true });
+  description: { type: String, required: true },
+  date: { type: Date, default: Date.now, expires: 604800 }, // Auto-delete after 7 days
+});
 
 module.exports = mongoose.model("Achievement", achievementSchema);

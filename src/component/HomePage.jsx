@@ -618,14 +618,110 @@ const HomePage = () => {
     const savedPosts = localStorage.getItem("posts");
     return savedPosts ? JSON.parse(savedPosts) : [];
   });
-
+  const [announcements, setAnnouncements] = useState([]);
+  const [achievements, setAchievements] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState("");
+  const [modalType, setModalType] = useState(""); // 'announcement' or 'achievement'
+  const [loading, setLoading] = useState({
+    announcements: false,
+    achievements: false
+  });
+  const [error, setError] = useState({
+    announcements: null,
+    achievements: null
+  });
+  
   const { user } = useUser();
   const navigate = useNavigate();
   const [showComments, setShowComments] = useState({});
 
+  // Fetch data from backend on component mount
   useEffect(() => {
     localStorage.setItem("posts", JSON.stringify(posts));
+    fetchAnnouncements();
+    fetchAchievements();
   }, [posts]);
+
+  // Fetch announcements from API
+  const fetchAnnouncements = async () => {
+    setLoading(prev => ({...prev, announcements: true}));
+    setError(prev => ({...prev, announcements: null}));
+    
+    try {
+      const response = await fetch("http://localhost:5005/api/announcements");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch announcements: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setAnnouncements(data.map(item => `📌 ${item.description}`));
+    } catch (err) {
+      setError(prev => ({...prev, announcements: err.message}));
+      console.error("Error fetching announcements:", err);
+    } finally {
+      setLoading(prev => ({...prev, announcements: false}));
+    }
+  };
+
+  // Fetch achievements from API
+  const fetchAchievements = async () => {
+    setLoading(prev => ({...prev, achievements: true}));
+    setError(prev => ({...prev, achievements: null}));
+    
+    try {
+      const response = await fetch("http://localhost:5005/api/achievements");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch achievements: ${response.statusText}`);
+      }
+      const data = await response.json();
+      setAchievements(data.map(item => `🎉 ${item.description}`));
+    } catch (err) {
+      setError(prev => ({...prev, achievements: err.message}));
+      console.error("Error fetching achievements:", err);
+    } finally {
+      setLoading(prev => ({...prev, achievements: false}));
+    }
+  };
+
+  // Add announcement API call
+  const addAnnouncementAPI = async (description) => {
+    try {
+      const response = await fetch("http://localhost:5005/api/announcements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to add announcement: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("Error adding announcement:", error);
+      return null;
+    }
+  };
+
+  // Add achievement API call
+  const addAchievementAPI = async (description) => {
+    try {
+      const response = await fetch("http://localhost:5005/api/achievements", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to add achievement: ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("Error adding achievement:", error);
+      return null;
+    }
+  };
 
   const createPost = () => {
     if (postText.trim() || postImage) {
@@ -678,27 +774,99 @@ const HomePage = () => {
     }
   };
 
+  const handleExploreEvents = () => {
+    navigate("/events");
+  };
+
+  const openModal = (type) => {
+    setModalType(type);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalContent("");
+  };
+
+  const submitModal = async () => {
+    if (!modalContent.trim()) return;
+  
+    try {
+      if (modalType === "announcement") {
+        await addAnnouncementAPI(modalContent);
+        await fetchAnnouncements();
+      } else {
+        await addAchievementAPI(modalContent);
+        await fetchAchievements();
+      }
+      closeModal();
+    } catch (error) {
+      console.error("Error: Submission failed.", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
       <Navbar />
       <div className="container mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
-        
         {/* Left Sidebar - Announcements & Achievements */}
         <div className="hidden md:block md:col-span-1">
+          {/* Announcements Section */}
           <div className="bg-purple-700 p-5 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-white">📢 announcements</h3>
-            <ul className="mt-2 text-white">
-              <li>📌 Hackathon registration starts from March 25</li>
-              <li>📌 Mid-Sem exams from April 10</li>
-            </ul>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-white">📢 Announcements</h3>
+              {user && (
+                <button 
+                  onClick={() => openModal("announcement")}
+                  className="text-white bg-purple-800 px-2 py-1 rounded text-sm"
+                >
+                  Add
+                </button>
+              )}
+            </div>
+            {loading.announcements ? (
+              <p className="text-white mt-2">Loading announcements...</p>
+            ) : error.announcements ? (
+              <p className="text-red-300 mt-2">Error: {error.announcements}</p>
+            ) : (
+              <ul className="mt-2 text-white">
+                {announcements.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            )}
           </div>
 
+          {/* Achievements Section */}
           <div className="bg-blue-600 mt-6 p-5 rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-white">🏆 Achievements</h3>
-            <ul className="mt-2 text-white">
-              <li>🎉 Team XYZ won 1st place in AI Challenge!</li>
-              <li>🎉 Student ABC published a research paper!</li>
-            </ul>
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold text-white">🏆 Achievements</h3>
+              {user && (
+                <button 
+                  onClick={() => openModal("achievement")}
+                  className="text-white bg-blue-700 px-2 py-1 rounded text-sm"
+                >
+                  Add
+                </button>
+              )}
+            </div>
+            {loading.achievements ? (
+              <p className="text-white mt-2">Loading achievements...</p>
+            ) : error.achievements ? (
+              <p className="text-red-300 mt-2">Error: {error.achievements}</p>
+            ) : (
+              <ul className="mt-2 text-white">
+                {achievements.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Explore Events Section */}
+          <div className="bg-green-600 mt-6 p-5 rounded-lg shadow-md cursor-pointer" onClick={handleExploreEvents}>
+            <h3 className="text-lg font-semibold text-white">🌟 Explore Events</h3>
+            <p className="mt-2 text-white">Check out the latest events happening!</p>
           </div>
         </div>
 
@@ -776,52 +944,37 @@ const HomePage = () => {
         {/* Right Sidebar - Profile & Create Post Box */}
         <div className="hidden md:block md:col-span-1">
           {/* Profile Section */}
-         {/* Profile Section */}
-{/* Profile Section */}
-{/* Profile Section */}
-<div className="bg-[#D8BFD8] p-6 rounded-lg shadow-lg mb-6 text-center">
-  {user ? (
-    <>
-      {/* Profile Image */}
-      <div className="flex justify-center">
-        <img
-          src={user.profileImage || "https://tse1.mm.bing.net/th?id=OIP.MoLuogvKSS_uEhep5nvcuQHaID&pid=Api&P=0&h=180"}
-          alt="Profile"
-          className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md"
-        />
-      </div>
-
-      {/* User Name */}
-      <h3 className="text-2xl font-extrabold text-gray-800 mt-4">{user.username}</h3>
-
-      {/* User Bio */}
-      <p className="text-gray-700 text-sm font-bold mt-1">Pre-final year student at VIT Bhopal University</p>
-      <p className="text-gray-600 text-xs font-bold">Banda, Uttar Pradesh</p>
-
-      {/* Badge */}
-      <div className="mt-3 flex justify-center items-center">
-        <span className="text-purple-700 font-bold text-sm">🔹 Bluestock™</span>
-      </div>
-
-      {/* Stats */}
-      <div className="bg-[#E6C6FF] p-4 rounded-lg mt-5 text-sm font-bold shadow-inner">
-        <div className="flex justify-between text-gray-800">
-          <span>Profile viewers</span>
-          <span className="text-purple-900">156</span>
-        </div>
-        <div className="flex justify-between text-gray-800 mt-3">
-          <span>Post impressions</span>
-          <span className="text-purple-900">311</span>
-        </div>
-      </div>
-    </>
-  ) : (
-    <p className="text-gray-800 font-bold">Log in to see your profile.</p>
-  )}
-</div>
-
-
-
+          <div className="bg-[#D8BFD8] p-6 rounded-lg shadow-lg mb-6 text-center">
+            {user ? (
+              <>
+                <div className="flex justify-center">
+                  <img
+                    src={user.profileImage || "https://tse1.mm.bing.net/th?id=OIP.MoLuogvKSS_uEhep5nvcuQHaID&pid=Api&P=0&h=180"}
+                    alt="Profile"
+                    className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md"
+                  />
+                </div>
+                <h3 className="text-2xl font-extrabold text-gray-800 mt-4">{user.username}</h3>
+                <p className="text-gray-700 text-sm font-bold mt-1">Pre-final year student at VIT Bhopal University</p>
+                <p className="text-gray-600 text-xs font-bold">Banda, Uttar Pradesh</p>
+                <div className="mt-3 flex justify-center items-center">
+                  <span className="text-purple-700 font-bold text-sm">🔹 Bluestock™</span>
+                </div>
+                <div className="bg-[#E6C6FF] p-4 rounded-lg mt-5 text-sm font-bold shadow-inner">
+                  <div className="flex justify-between text-gray-800">
+                    <span>Profile viewers</span>
+                    <span className="text-purple-900">156</span>
+                  </div>
+                  <div className="flex justify-between text-gray-800 mt-3">
+                    <span>Post impressions</span>
+                    <span className="text-purple-900">311</span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-gray-800 font-bold">Log in to see your profile.</p>
+            )}
+          </div>
 
           {/* Create a Post Section */}
           <div className="bg-gray-800 p-5 rounded-lg shadow-md">
@@ -853,8 +1006,39 @@ const HomePage = () => {
             </button>
           </div>
         </div>
-
       </div>
+
+      {/* Modal for adding announcements/achievements */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full">
+            <h3 className="text-xl font-semibold text-white mb-4">
+              Add {modalType === "announcement" ? "Announcement" : "Achievement"}
+            </h3>
+            <textarea
+              className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-gray-300 mb-4"
+              placeholder={`Enter ${modalType === "announcement" ? "announcement" : "achievement"} description...`}
+              value={modalContent}
+              onChange={(e) => setModalContent(e.target.value)}
+              rows={4}
+            />
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={closeModal}
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitModal}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

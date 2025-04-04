@@ -1,20 +1,18 @@
 const mongoose = require("mongoose");
-// User Schema
+
 const UserSchema = new mongoose.Schema({
-  name: { type: String, required: true }, 
-  email: { type: String, unique: true, required: true }, 
-  password: { type: String, required: true }, 
+  name: { type: String, required: true },
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
   role: { type: String, enum: ["student", "faculty", "alumni"], required: true },
 
-  // Optional fields based on role
-  batch: { type: String, default: "" }, // For students
-  regNumber: { type: String, default: "" }, // For students
-  facultyId: { type: String, default: "" }, // For faculty
-  department: { type: String, default: "" }, // For faculty
-  company: { type: String, default: "" }, // For alumni
-  passedOutBatch: { type: String, default: "" }, // For alumni
-
-  // Additional optional fields
+  // Optional fields
+  batch: { type: String, default: "" },
+  regNumber: { type: String, default: "" },
+  facultyId: { type: String, default: "" },
+  department: { type: String, default: "" },
+  company: { type: String, default: "" },
+  passedOutBatch: { type: String, default: "" },
   image: { type: String, default: "" },
   skills: { type: [String], default: [] },
   linkedin: { type: String, default: "" },
@@ -26,3 +24,5 @@ const UserSchema = new mongoose.Schema({
   connections: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
+
+module.exports = mongoose.model("User", UserSchema);
