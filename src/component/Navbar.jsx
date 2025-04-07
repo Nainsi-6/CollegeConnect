@@ -38,7 +38,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="bg-indigo-500 p-4 text-white flex justify-between items-center shadow-lg">
+    <nav className="bg-gray-700 p-4 text-white flex justify-between items-center shadow-lg">
       {/* Left Section: User Greeting and Search Bar */}
       <div className="flex items-center space-x-4">
         {user && (

@@ -59,10 +59,10 @@ const ConnectPeople = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-gray-900">
+    <div className="min-h-screen bg-gray-500 text-gray-900">
       <Navbar />
       <div className="max-w-5xl mx-auto py-10 px-6">
-        <h2 className="text-3xl font-semibold mb-6 text-indigo-900">Find & Connect with People</h2>
+        <h2 className="text-3xl font-bold mb-6 text-indigo-900">Find & Connect with People</h2>
         <input
           type="text"
           placeholder="Search users..."
@@ -72,7 +72,7 @@ const ConnectPeople = () => {
 
         {connectionRequests.length > 0 && (
           <div className="bg-white p-4 rounded-lg shadow-md mt-6">
-            <h3 className="text-xl font-medium text-indigo-700">Connection Requests</h3>
+            <h3 className="text-xl font-bold text-indigo-700">Connection Requests</h3>
             {connectionRequests.map((user) => (
               <div key={user._id} className="flex items-center p-3 bg-indigo-50 rounded-lg shadow-sm mt-2">
                 <img
@@ -125,7 +125,7 @@ const ConnectPeople = () => {
           </div>
         )}
 
-        <h3 className="text-2xl font-semibold mt-8 mb-4 text-indigo-900">People You May Know</h3>
+        <h3 className="text-2xl font-bold mt-8 mb-4 text-indigo-900">People You May Know</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {users.map((user) => (
             <div

@@ -2253,7 +2253,7 @@ const HomePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-gray-100">
+    <div className="min-h-screen bg-gray-900 text-gray-100">
       <Navbar />
       <div className="container mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-4 gap-6">
         {/* Left Sidebar - Announcements & Achievements */}
@@ -2341,7 +2341,7 @@ const HomePage = () => {
             posts.map((post) => (
               <div
                 key={post._id}
-                className="bg-gray-800 p-5 rounded-lg shadow-md mb-5 max-w-[90%] mx-auto hover:shadow-lg transition-shadow"
+                className="bg-gray-700 p-5 rounded-lg shadow-md mb-5 max-w-[90%] mx-auto hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-center mb-3">
                   <div className="w-10 h-10 rounded-full bg-indigo-600 mr-3 flex items-center justify-center overflow-hidden">
@@ -2436,12 +2436,12 @@ const HomePage = () => {
 
                 {/* Comments section */}
                 {showComments[post._id] && (
-                  <div className="mt-4 bg-black p-3 rounded-lg">
+                  <div className="mt-4 bg-gray-600 p-3 rounded-lg">
                     <h4 className="text-white mb-2 font-medium">Comments</h4>
                     {post.comments && post.comments.length > 0 ? (
                       <div className="space-y-2 max-h-60 overflow-y-auto">
                         {post.comments.map((comment, cIndex) => (
-                          <div key={cIndex} className="bg-indigo-500 p-2 rounded">
+                          <div key={cIndex} className="bg-gray-800 p-2 rounded">
                             <div className="flex items-center gap-2 mb-1">
                             <span className="font-semibold text-sm text-white">
 
@@ -2451,7 +2451,7 @@ const HomePage = () => {
                                 {new Date(comment.createdAt).toLocaleString()}
                               </span>
                             </div>
-                            <p className="text-black text-sm font-medium">{comment.text}</p>
+                            <p className="text-white text-sm font-thin">{comment.text}</p>
 
                           </div>
                         ))}
@@ -2562,7 +2562,7 @@ const HomePage = () => {
           </div>
 
           {/* Create a Post Section */}
-          <div className="bg-indigo-800 p-5 rounded-lg shadow-md">
+          <div className="bg-gray-700 p-5 rounded-lg shadow-md">
             <h3 className="text-lg font-semibold text-indigo-100">Create a Post</h3>
             <textarea
               className="w-full bg-indigo-700 border border-indigo-600 rounded-lg p-3 text-indigo-100 mt-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
