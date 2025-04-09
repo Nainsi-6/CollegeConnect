@@ -75,7 +75,7 @@ const ContactUs = () => {
               Your feedback means a lot to us!
             </p>
             <img
-              src="grab-this-carefully-crafted-icon-of-thanks-emoji-ready-for-premium-use-vector-removebg-preview.png"
+              src="form.png"
               alt="Happy Face"
               className="w-28 h-28 rounded-full shadow-lg"
             />
