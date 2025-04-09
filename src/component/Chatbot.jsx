@@ -94,12 +94,16 @@ const Chatbot = () => {
   };
 
   const handleSend = async (msg) => {
-    const userMessage = msg || message.trim();
+    let userMessage = msg || message.trim();
     if (!userMessage) return;
 
     setMessage("");
 
-    if (userMessage.toLowerCase().includes("bye") || userMessage.toLowerCase().includes("thanks") || userMessage.toLowerCase().includes("thank you")) {
+    // Insert logic to replace "Hey" with career counselor prompt
+    const lowerMessage = userMessage.toLowerCase();
+    const actualGeminiPrompt = lowerMessage === "hey" ? "Hey, act as a career counsellor" : userMessage;
+
+    if (lowerMessage.includes("bye") || lowerMessage.includes("thanks") || lowerMessage.includes("thank you")) {
       const goodbyeMessage = sessionContext.name
         ? `Goodbye, ${sessionContext.name}! Have a great day!`
         : "Goodbye! Have a great day!";
@@ -120,7 +124,7 @@ const Chatbot = () => {
       return;
     }
 
-    if (userMessage.toLowerCase().includes("what is my name")) {
+    if (lowerMessage.includes("what is my name")) {
       const botResponse = sessionContext.name
         ? `Your name is ${sessionContext.name}.`
         : "I don't know your name yet. What should I call you?";
@@ -133,8 +137,7 @@ const Chatbot = () => {
     if (userMessage === "Career Suggestions and Roadmaps?") {
       setShowCareerOptions(true);
       botResponse = "Please select the Career you're aiming for:";
-    }
-    else if (careerOptions.includes(userMessage)) {
+    } else if (careerOptions.includes(userMessage)) {
       setShowCareerOptions(false);
       switch (userMessage) {
         case "Full Stack Developer":
@@ -169,25 +172,20 @@ const Chatbot = () => {
           botResponse = "I can help with that!";
           break;
       }
-    }
-    else if (predefinedResponses[userMessage]) {
+    } else if (predefinedResponses[userMessage]) {
       botResponse = predefinedResponses[userMessage];
-    }
-    else {
+    } else {
       setLoading(true);
       try {
         const contextPrompt = sessionContext.name ? `The user's name is ${sessionContext.name}. ` : "";
         const response = await axios.post(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
           {
-            contents: [{ role: "user", parts: [{ text: `${contextPrompt}${userMessage}` }] }],
+            contents: [{ role: "user", parts: [{ text: `${contextPrompt}${actualGeminiPrompt}` }] }],
           },
           { headers: { "Content-Type": "application/json" } }
         );
         botResponse = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate a response.";
-        if (sessionContext.name && botResponse.toLowerCase().includes("your name")) {
-          botResponse = `Your name is ${sessionContext.name}. ` + botResponse;
-        }
       } catch (error) {
         console.error("API error:", error);
         botResponse = "⚠️ Error fetching response.";
@@ -267,6 +265,15 @@ const Chatbot = () => {
               className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-r-lg"
             >
               Send
+            </button>
+          </div>
+
+          <div className="p-2 border-t border-gray-200 text-center bg-indigo-50">
+            <button
+              onClick={resetConversation}
+              className="text-sm text-indigo-600 hover:text-white hover:bg-indigo-600 px-3 py-1 rounded transition duration-300 border border-indigo-600"
+            >
+              🔁 Restart Conversation
             </button>
           </div>
         </div>
