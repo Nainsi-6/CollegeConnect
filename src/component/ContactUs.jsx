@@ -1,61 +1,86 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from './Navbar'; // Assuming you have a Navbar component
+import Navbar from './Navbar';
 
 const ContactUs = () => {
   const [feedback, setFeedback] = useState('');
+  const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
   const handleFeedbackSubmit = () => {
-    // Here you can add logic to submit feedback (e.g., send to a server or save in local storage)
-    alert('Feedback submitted: ' + feedback);
-    setFeedback(''); // Clear the input after submission
+    if (feedback.trim()) {
+      setSubmitted(true);
+      setFeedback('');
+    } else {
+      alert('Please enter your feedback before submitting.');
+    }
   };
 
   return (
-    <div 
-      className="bg-cover bg-center min-h-screen" 
-      style={{ 
-        backgroundImage: 'url("https://example.com/your-image.jpg")', // Replace with your image URL
-        backgroundColor: '#282c34', // Fallback background color if the image doesn't load
+    <div
+      className="bg-cover bg-center min-h-screen"
+      style={{
+        backgroundImage: 'url("https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1400&q=80")', // Beautiful background
+        backgroundColor: '#1a202c',
       }}
     >
-      {/* Sticky Navbar */}
       <div style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
         <Navbar />
       </div>
 
-      {/* Contact Us Section */}
-      <div 
-        className="contact-us-content shadow-lg" 
+      <div
+        className="shadow-xl backdrop-blur-sm"
         style={{
-          padding: '40px', 
-          maxWidth: '600px', 
-          margin: '80px auto', 
-          backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent dark background
-          borderRadius: '15px', 
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+          padding: '50px 40px',
+          maxWidth: '650px',
+          margin: '100px auto',
+          backgroundColor: 'rgba(0, 0, 0, 0.65)',
+          borderRadius: '20px',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.5)',
+          textAlign: 'center',
         }}
       >
-        <h2 className="text-3xl font-bold text-center text-gradient mb-6">
-          Send Your Feedback
-        </h2>
-        
-        <textarea
-          value={feedback}
-          onChange={(e) => setFeedback(e.target.value)}
-          placeholder="Write your feedback here..."
-          rows="6"
-          className="border-2 border-gradient mb-5 w-full text-lg text-black outline-none bg-transparent rounded-lg py-2 px-4"
-          style={{ backgroundColor: 'rgba(255, 255, 255, 0.3)' }} // Light semi-transparent background for text area
-        />
-        
-        <button
-          onClick={handleFeedbackSubmit}
-          className="mt-5 text-lg text-white bg-gradient-to-r from-teal-400 to-cyan-600 hover:bg-gradient-to-l rounded-lg py-2 w-full"
-        >
-          Submit Feedback
-        </button>
+        {!submitted ? (
+          <>
+            <h2 className="text-4xl font-extrabold mb-8 bg-gradient-to-r from-teal-400 to-cyan-600 bg-clip-text text-transparent tracking-wide">
+              Share Your Thoughts ✨
+            </h2>
+
+            <textarea
+              value={feedback}
+              onChange={(e) => setFeedback(e.target.value)}
+              placeholder="Write your feedback here..."
+              rows="6"
+              className="border-2 border-cyan-400 w-full text-lg text-white rounded-xl py-3 px-4 mb-6 transition focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(5px)',
+                resize: 'none',
+              }}
+            />
+
+            <button
+              onClick={handleFeedbackSubmit}
+              className="text-lg font-semibold text-white bg-gradient-to-r from-teal-400 to-cyan-600 hover:from-cyan-600 hover:to-teal-400 transition duration-300 ease-in-out rounded-xl py-3 w-full shadow-lg"
+            >
+              ✉️ Submit Feedback
+            </button>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center space-y-6 animate-fade-in">
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-teal-400 to-cyan-600 bg-clip-text text-transparent">
+              Thank You! 💌
+            </h2>
+            <p className="text-lg text-white opacity-90">
+              Your feedback means a lot to us!
+            </p>
+            <img
+              src="grab-this-carefully-crafted-icon-of-thanks-emoji-ready-for-premium-use-vector-removebg-preview.png"
+              alt="Happy Face"
+              className="w-28 h-28 rounded-full shadow-lg"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
