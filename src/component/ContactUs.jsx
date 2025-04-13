@@ -1,16 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from './Navbar';
+import axios from 'axios';
+import Navbar from './Navbar'; // Assuming you have a Navbar component
 
 const ContactUs = () => {
   const [feedback, setFeedback] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const navigate = useNavigate();
 
-  const handleFeedbackSubmit = () => {
+  const handleFeedbackSubmit = async () => {
     if (feedback.trim()) {
-      setSubmitted(true);
-      setFeedback('');
+      try {
+        const res = await axios.post("http://localhost:5005/api/feedback/submit", {
+          message: feedback
+        });
+
+        if (res.status === 200 || res.status === 201) {
+          setSubmitted(true);
+          setFeedback('');
+        } else {
+          alert('Something went wrong. Please try again.');
+        }
+      } catch (error) {
+        console.error("Feedback submission failed:", error);
+        alert('Error submitting feedback. Please check the console or try again.');
+      }
     } else {
       alert('Please enter your feedback before submitting.');
     }
@@ -20,7 +34,7 @@ const ContactUs = () => {
     <div
       className="bg-cover bg-center min-h-screen"
       style={{
-        backgroundImage: 'url("https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1400&q=80")', // Beautiful background
+        backgroundImage: 'url("https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=1400&q=80")',
         backgroundColor: '#1a202c',
       }}
     >
