@@ -329,6 +329,7 @@ app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));*/
 
 
 
+
 const axios = require("axios");
 require("dotenv").config();
 const express = require("express");
@@ -336,25 +337,29 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const announcementRoutes = require("./routes/announcementRoutes")
+const path = require("path");
+
+const announcementRoutes = require("./routes/announcementRoutes");
 const achievementRoutes = require("./routes/achievementsRoutes");
 const profileRoutes = require("./routes/profileRoutes");
-const connectDB = require("./config/db");
-const User = require("./models/User");  // Importing User Model
 const authRoutes = require("./routes/authRoutes");
-const bodyParser = require("body-parser");
 const eventsRoutes = require("./routes/eventsRoutes");
 const postRoutes = require("./routes/postRoutes");
-const path = require("path")
-const app = express();
-// app.use(express.json());
-app.use(cors());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")))
+const feedbackRoutes = require("./routes/feedbackRoutes"); 
 
+const connectDB = require("./config/db");
+const User = require("./models/User"); // User model
+
+const bodyParser = require("body-parser");
+
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(bodyParser.json());
-// Make sure your app has the proper middleware for handling file uploads
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // MongoDB Connection
 connectDB();
@@ -363,26 +368,19 @@ connectDB();
 
 
 
-
-//Announcements
-//Auth Routes
+// Routes
 app.use("/api/auth", authRoutes); 
 app.use("/api/announcements", announcementRoutes);
-//Achievements
 app.use("/api/achievements", achievementRoutes);
- 
-// Use Profile Routes
 app.use("/api/profile", profileRoutes);
-//Events Routes
-// Routes
 app.use("/api/events", eventsRoutes);
-
 app.use("/api/posts", postRoutes);
-
-
+app.use("/api/feedback", feedbackRoutes); 
 
 // Server Setup
-const PORT =  5005;
+const PORT = 5005;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+
 
 
