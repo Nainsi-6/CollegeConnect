@@ -1,10 +1,89 @@
+// "use client"
+
+// import { useEffect } from "react"
+// import { useNavigate } from "react-router-dom"
+// import axios from "axios"
+// import { useUser } from "../contexts/UserContext"
+// import { Link } from "react-router-dom"
+
+// const Navbar = () => {
+//   const navigate = useNavigate()
+//   const { user, setUser } = useUser()
+
+//   useEffect(() => {
+//     const fetchUser = async () => {
+//       try {
+//         const token = localStorage.getItem("token")
+//         if (!token) return
+
+//         const response = await axios.get("http://localhost:5005/api/user", {
+//           headers: { Authorization: token },
+//         })
+//         setUser(response.data)
+//       } catch (error) {
+//         console.error("Error fetching user", error)
+//       }
+//     }
+
+//     fetchUser()
+//   }, [setUser])
+
+//   const handleLogout = () => {
+//     localStorage.removeItem("token")
+//     setUser(null)
+//     navigate("/login")
+//   }
+
+//   const handleNavigate = (path) => {
+//     navigate(path)
+//   }
+
+//   return (
+//     <nav className="fixed top-0 left-0 w-full z-50 bg-gray-700 px-4 py-4 text-white flex justify-between items-center shadow-lg">
+//   {/* Left Section */}
+//   <div className="flex items-center space-x-4">
+//     {user && (
+//       <span className="text-white font-medium text-base flex items-center">
+//         <span role="img" aria-label="waving hand" className="mr-1">👋</span>
+//         Hi, {user.name}
+//       </span>
+//     )}
+//     <input
+//       type="text"
+//       placeholder="Search..."
+//       className="bg-white border border-indigo-400 text-indigo-900 py-1 px-3 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
+//     />
+//   </div>
+
+//   {/* Right Section */}
+//   <div className="flex space-x-7 items-center text-base">
+//     <button onClick={() => handleNavigate("/home")} className="hover:text-indigo-300 font-semibold">Home</button>
+//     <button onClick={() => handleNavigate("/connect")} className="hover:text-indigo-300 font-semibold">Connect People</button>
+//     <button onClick={() => handleNavigate("/about")} className="hover:text-indigo-300 font-semibold">About Us</button>
+//     <button onClick={() => handleNavigate("/profile")} className="hover:text-indigo-300 font-semibold">Profile</button>
+//     <button onClick={() => handleNavigate("/contact")} className="hover:text-indigo-300 font-semibold">Contact</button>
+//     <button onClick={() => handleNavigate("/chatbot")} className="hover:text-indigo-300 font-semibold">Help</button>
+//     {user && (
+//       <button
+//         onClick={handleLogout}
+//         className="bg-indigo-800 text-white font-semibold px-4 py-1 rounded-full hover:bg-indigo-900 transition-colors shadow"
+//       >
+//         Logout
+//       </button>
+//     )}
+//   </div>
+// </nav>
+//   )
+// }
+
+// export default Navbar
+
 "use client"
 
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import axios from "axios"
 import { useUser } from "../contexts/UserContext"
-import { Link } from "react-router-dom"
 
 const Navbar = () => {
   const navigate = useNavigate()
@@ -40,43 +119,58 @@ const Navbar = () => {
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-gray-700 px-4 py-4 text-white flex justify-between items-center shadow-lg">
-  {/* Left Section */}
-  <div className="flex items-center space-x-4">
-    {user && (
-      <span className="text-white font-medium text-base flex items-center">
-        <span role="img" aria-label="waving hand" className="mr-1">👋</span>
-        Hi, {user.name}
-      </span>
-    )}
-    <input
-      type="text"
-      placeholder="Search..."
-      className="bg-white border border-indigo-400 text-indigo-900 py-1 px-3 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
-    />
-  </div>
+      {/* Left Section */}
+      <div className="flex items-center space-x-4">
+        {user && (
+          <span className="text-white font-medium text-base flex items-center">
+            <span role="img" aria-label="waving hand" className="mr-1">
+              👋
+            </span>
+            Hi, {user.name}
+          </span>
+        )}
+        <input
+          type="text"
+          placeholder="Search..."
+          className="bg-white border border-indigo-400 text-indigo-900 py-1 px-3 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 text-base"
+        />
+      </div>
 
-  {/* Right Section */}
-  <div className="flex space-x-7 items-center text-base">
-    <button onClick={() => handleNavigate("/home")} className="hover:text-indigo-300 font-semibold">Home</button>
-    <button onClick={() => handleNavigate("/connect")} className="hover:text-indigo-300 font-semibold">Connect People</button>
-    <button onClick={() => handleNavigate("/about")} className="hover:text-indigo-300 font-semibold">About Us</button>
-    <button onClick={() => handleNavigate("/profile")} className="hover:text-indigo-300 font-semibold">Profile</button>
-    <button onClick={() => handleNavigate("/contact")} className="hover:text-indigo-300 font-semibold">Contact</button>
-    <button onClick={() => handleNavigate("/chatbot")} className="hover:text-indigo-300 font-semibold">Help</button>
-    {user && (
-      <button
-        onClick={handleLogout}
-        className="bg-indigo-800 text-white font-semibold px-4 py-1 rounded-full hover:bg-indigo-900 transition-colors shadow"
-      >
-        Logout
-      </button>
-    )}
-  </div>
-</nav>
+      {/* Right Section */}
+      <div className="flex space-x-7 items-center text-base">
+        <button onClick={() => handleNavigate("/home")} className="hover:text-indigo-300 font-semibold">
+          Home
+        </button>
+        <button onClick={() => handleNavigate("/connect")} className="hover:text-indigo-300 font-semibold">
+          Connect People
+        </button>
+        <button onClick={() => handleNavigate("/about")} className="hover:text-indigo-300 font-semibold">
+          About Us
+        </button>
+        <button onClick={() => handleNavigate("/profile")} className="hover:text-indigo-300 font-semibold">
+          Profile
+        </button>
+        <button onClick={() => handleNavigate("/contact")} className="hover:text-indigo-300 font-semibold">
+          Contact
+        </button>
+        <button onClick={() => handleNavigate("/chatbot")} className="hover:text-indigo-300 font-semibold">
+          Help
+        </button>
+        {user && (
+          <button
+            onClick={handleLogout}
+            className="bg-indigo-800 text-white font-semibold px-4 py-1 rounded-full hover:bg-indigo-900 transition-colors shadow"
+          >
+            Logout
+          </button>
+        )}
+      </div>
+    </nav>
   )
 }
 
 export default Navbar
+
 
 // "use client"
 

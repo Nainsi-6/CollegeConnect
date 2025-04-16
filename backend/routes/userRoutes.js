@@ -1,32 +1,32 @@
 const express = require("express")
 const router = express.Router()
 const userController = require("../controllers/userController")
-const { authenticateUser } = require("../middleware/auth")
+const { authMiddleware } = require("../middleware/authMiddleware")
 
-// Apply authentication middleware to all routes
-router.use(authenticateUser)
+// Apply auth middleware to all routes
+router.use(authMiddleware)
 
-// Get all users
-router.get("/all", userController.getAllUsers)
+// Search users
+router.get("/search", userController.searchUsers)
 
-// Get user by ID
-router.get("/:userId", userController.getUserById)
+// Get suggested users
+router.get("/suggested", userController.getSuggestedUsers)
 
-// Send connection request
-router.post("/connect/:userId", userController.sendConnectionRequest)
+// Get connection requests
+router.get("/requests", userController.getConnectionRequests)
 
-// Get user connections
-router.get("/connections", userController.getUserConnections)
+// Follow a user
+router.post("/follow/:userId", userController.followUser)
 
-// Accept connection request
-router.put("/connections/:connectionId/accept", userController.acceptConnectionRequest)
+// Respond to a follow request
+router.put("/request/:requestId", userController.respondToFollowRequest)
 
-// Delete/cancel connection
-router.delete("/connections/:connectionId", userController.deleteConnection)
-
-// Get user's network (followers/following)
-router.get("/network", userController.getUserNetwork)
+// Get followers and following
+router.get("/connections/:userId?", userController.getConnections)
 
 module.exports = router
+
+
+
 
 
